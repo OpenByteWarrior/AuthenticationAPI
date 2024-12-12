@@ -1,0 +1,44 @@
+package com.authentication_api.application.usecase;
+
+import com.authentication_api.application.dto.UserDTO;
+import com.authentication_api.application.dto.UserLoginDTO;
+import com.authentication_api.application.service.JwtService;
+import com.authentication_api.application.service.UserService;
+import com.authentication_api.domain.UserGateway;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class AuthUseCase {
+
+    private final UserService userService;
+    private final JwtService jwtService;
+    private final ModelMapper modelMapper;
+    private final UserGateway userGateway;
+    private final AuthenticationManager authenticationManager;
+
+
+    public UserDTO register(UserDTO user) {
+        return modelMapper.map(userService.createUser(user), UserDTO.class);
+    }
+    public String login(UserLoginDTO userLoginDTO) {
+            try {
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(userLoginDTO.getEmail(), userLoginDTO.getPassword())
+                );
+                UserDetails user = userGateway.findByEmail(userLoginDTO.getEmail()).orElseThrow();
+                return jwtService.generateToken(user);
+            } catch (Exception e) {
+                throw new BadCredentialsException("Invalid email or password", e);
+            }
+    }
+    public void logout() {
+        // Logout user
+    }
+}
