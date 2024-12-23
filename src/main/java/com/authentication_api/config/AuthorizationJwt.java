@@ -3,6 +3,7 @@ package com.authentication_api.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,6 +25,9 @@ public class AuthorizationJwt {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
+                                .requestMatchers(HttpMethod.DELETE, "/**").hasAnyRole("ADMIN")
+                                .requestMatchers("/admin/**").hasAnyRole("GUEST","ADMIN")
+                                .requestMatchers("/users/**").hasAnyRole("USER", "ADMIN")
                                 .requestMatchers("/api/auth/**", "/api/welcome").permitAll()
                                 .anyRequest().authenticated()
                 )

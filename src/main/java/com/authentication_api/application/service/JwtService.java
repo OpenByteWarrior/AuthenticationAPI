@@ -1,5 +1,6 @@
 package com.authentication_api.application.service;
 
+import com.authentication_api.infrastructure.security.CustomUserDetails;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -17,8 +18,10 @@ public class JwtService {
 
     private static final String SECRET = "PATATACALIENTsdasdasdasdasdasjkdgajksdghjhasgdjhasdjhE";
 
-    public String generateToken(UserDetails user) {
-        return generateToken(new HashMap<>(), user);
+    public String generateToken(CustomUserDetails user) {
+        HashMap<String,Object> claims = new HashMap<>();
+        claims.put("roleId", user.getRoleId());
+        return generateToken(claims, user);
     }
 
     private String generateToken(HashMap<String, Object> claims, UserDetails userDetails) {
@@ -45,6 +48,16 @@ public class JwtService {
                 .getBody()
                 .getSubject();
     }
+    public String getRoleIdFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("roleId", String.class);
+    }
+
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
