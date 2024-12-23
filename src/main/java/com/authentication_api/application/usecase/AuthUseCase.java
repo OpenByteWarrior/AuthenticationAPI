@@ -5,12 +5,12 @@ import com.authentication_api.application.dto.UserLoginDTO;
 import com.authentication_api.application.service.JwtService;
 import com.authentication_api.application.service.UserService;
 import com.authentication_api.domain.UserGateway;
+import com.authentication_api.infrastructure.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,7 +32,7 @@ public class AuthUseCase {
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(userLoginDTO.getEmail(), userLoginDTO.getPassword())
                 );
-                UserDetails user = userGateway.findByEmail(userLoginDTO.getEmail()).orElseThrow();
+                CustomUserDetails user = userGateway.findByEmail(userLoginDTO.getEmail()).orElseThrow();
                 return jwtService.generateToken(user);
             } catch (Exception e) {
                 throw new BadCredentialsException("Invalid email or password", e);
