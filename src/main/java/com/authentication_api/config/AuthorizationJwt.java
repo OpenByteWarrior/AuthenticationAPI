@@ -1,5 +1,6 @@
 package com.authentication_api.config;
 
+import com.authentication_api.infrastructure.security.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ public class AuthorizationJwt {
 
     private final JwtFilter jwtFilter;
     private final AuthenticationProvider authProvider;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -25,12 +27,14 @@ public class AuthorizationJwt {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers(HttpMethod.DELETE, "/**").hasAnyRole("ADMIN")
-                                .requestMatchers("/admin/**").hasAnyRole("GUEST","ADMIN")
                                 .requestMatchers("/users/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/admin/**").hasAnyRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/**").hasAnyRole("ADMIN")
                                 .requestMatchers("/api/auth/**", "/api/welcome").permitAll()
                                 .anyRequest().authenticated()
                 )
+                .exceptionHandling(exceptions -> exceptions
+                        .accessDeniedHandler(accessDeniedHandler))
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
