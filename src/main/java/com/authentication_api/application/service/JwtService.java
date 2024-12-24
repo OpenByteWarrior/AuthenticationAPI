@@ -17,6 +17,7 @@ import java.util.HashMap;
 public class JwtService {
 
     private static final String SECRET = "PATATACALIENTsdasdasdasdasdasjkdgajksdghjhasgdjhasdjhE";
+    private static final long EXPIRATION_TIME = 86400000L;
 
     public String generateToken(CustomUserDetails user) {
         HashMap<String,Object> claims = new HashMap<>();
@@ -30,7 +31,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(Instant.now().toEpochMilli()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 10 horas
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
