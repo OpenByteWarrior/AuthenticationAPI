@@ -1,6 +1,6 @@
 # Microservicio de Autenticación
 
-Este microservicio proporciona funcionalidades de autenticación y autorización, utilizando una arquitectura basada en Java con Spring Boot. Incluye manejo de roles, cacheo, generación de JWT y resiliencia para la integración con otros microservicios.
+Este microservicio proporciona funcionalidades de autenticación y autorización, utilizando una arquitectura basada en Java con Spring Boot. Incluye manejo de autorizacion por rol, cacheo, generación de JWT y resiliencia para la integración con otros microservicios.
 
 ---
 
@@ -189,15 +189,15 @@ El proyecto sigue una arquitectura **hexagonal**:
 
 ### 🔑 Autenticación
 
-- **POST** `/api/auth/login`: Autenticación de usuarios y generación de token JWT.
-- **POST** `/api/auth/register`: Registro de nuevos usuarios.
+ - **POST** `/api/auth/login`: Autenticación de usuarios y generación de token JWT.
+ - **POST** `/api/auth/register`: Registro de nuevos usuarios.
 
 ### 🛡️ Gestión de Usuarios
 
-- **GET** `/api/users`: Obtener información de usuarios.
-- **PUT** `/api/users/changepassword/{id}`: Cambiar contraseña de un usuario.
-- **PUT** `/api/users/{id}`: Actualizar información de un usuario.
-- **DELETE** `/api/users/{id}`: Eliminar un usuario.
+ - **GET** `/api/users`: Obtener información de usuarios.
+ - **PUT** `/api/users/changepassword/{id}`: Cambiar contraseña de un usuario.
+ - **PUT** `/api/users/{id}`: Actualizar información de un usuario.
+ - **DELETE** `/api/users/{id}`: Eliminar un usuario.
 
 ---
 
