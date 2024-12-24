@@ -112,11 +112,19 @@ Este microservicio proporciona funcionalidades de autenticación y autorización
 
 El proyecto sigue una arquitectura **hexagonal**:
 
-- **Core**: Contiene las entidades de dominio y los casos de uso.
-- **Adaptadores**:
-  - Entrada: Controladores REST para manejar solicitudes HTTP.
-  - Salida: Integración con la base de datos (Spring Data JPA) y con otros microservicios.
-- **Configuración**: Beans y configuración de las librerías utilizadas.
+- **`application`**:
+  - *`dto`*: Contiene los objetos de transferencia de datos (Data Transfer Objects) que se utilizan para enviar y recibir información.
+  - *`service`*: Contiene servicios auxiliares que no forman parte directa de la lógica de negocio, pero son esenciales para la operación del microservicio. 
+    - Ejemplo: manejo de JWT y operaciones de usuario que no requieren validaciones complejas o acciones directas del dominio.
+  - *`usecase`*: Contiene únicamente la lógica de negocio que representa acciones del dominio del microservicio.
+    - *`AuthUseCase.java`*: Métodos específicos para la autenticación.
+    - *`UserUseCase.java`*: Métodos relacionados con la gestión de usuarios (cambiar contraseña, actualizar perfil, etc.).
+
+- **`infrastructure/persistence`**:
+  - *`entity`*: Contiene las entidades de la aplicación que representan las tablas de la base de datos.
+  - *`repository`*: Contiene los repositorios y los adaptadores para la implementación de los gateways.
+
+- **`config`**: Contiene los beans y la configuración de las librerías utilizadas en el microservicio.
 
 ---
 
