@@ -54,19 +54,19 @@ Este microservicio proporciona funcionalidades de autenticación y autorización
     │   │   └── 📁com
     │   │       └── 📁authentication_api
     │   │           ├── 📁application
-    │   │           ├── 📁dto
-    │   │           │   ├── RequestChangePasswordDTO.java
-    │   │           │   ├── RequestUserUpdateDTO.java
-    │   │           │   ├── ResponseHttpDTO.java
-    │   │           │   ├── UserDTO.java
-    │   │           │   └── UserLoginDTO.java
-    │   │           ├── 📁service
-    │   │           │   ├── JwtService.java
-    │   │           │   ├── RoleService.java
-    │   │           │   └── UserService.java
-    │   │           ├── 📁usecase
-    │   │           │   ├── AuthUseCase.java
-    │   │           │   └── UserUseCase.java
+    │   │           |    ├── 📁dto
+    │   │           |    │   ├── RequestChangePasswordDTO.java
+    │   │           |    │   ├── RequestUserUpdateDTO.java
+    │   │           |    │   ├── ResponseHttpDTO.java
+    │   │           |    │   ├── UserDTO.java
+    │   │           |    │   └── UserLoginDTO.java
+    │   │           |    ├── 📁service
+    │   │           |    │   ├── JwtService.java
+    │   │           |    │   ├── RoleService.java
+    │   │           |    │   └── UserService.java
+    │   │           |    └── 📁usecase
+    │   │           |        ├── AuthUseCase.java
+    │   │           |        └── UserUseCase.java
     │   │           ├── 📁config
     │   │           │   ├── ApplicationConfig.java
     │   │           │   ├── AuthorizationJwt.java
