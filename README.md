@@ -141,7 +141,7 @@ El proyecto sigue una arquitectura **hexagonal**:
 1. **Clonar el repositorio**:
 
    ```bash
-   git clone https://github.com/JuanCamilo-FVXOU/AuthenticationAPI.git
+   git clone https://github.com/OpenByteWarrior/AuthenticationAPI.git
    cd AuthenticationAPI
    ```
 
