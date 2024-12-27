@@ -38,6 +38,15 @@ public class AuthUseCase {
                 throw new BadCredentialsException("Invalid email or password", e);
             }
     }
+
+    public boolean validateToken(String token) {
+        try {
+            return jwtService.validateToken(token);
+        } catch (Exception e) {
+            throw new BadCredentialsException("Token is invalid", e);
+        }
+    }
+
     public void logout() {
         // Logout user
     }

@@ -38,4 +38,12 @@ public class AuthController {
         ResponseHttpDTO response = new ResponseHttpDTO(HttpStatus.CREATED, "User registered successfully", createdUser);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @PostMapping("/validate")
+    public ResponseEntity<ResponseHttpDTO> validateToken(@RequestBody String token) {
+        boolean isValid = authUseCase.validateToken(token);
+        ResponseHttpDTO response = new ResponseHttpDTO(HttpStatus.OK, "Token is valid", isValid);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }
