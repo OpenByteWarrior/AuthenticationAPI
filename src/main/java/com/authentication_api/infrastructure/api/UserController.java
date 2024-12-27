@@ -1,13 +1,16 @@
-package com.authentication_api.infrastructure.rest;
+package com.authentication_api.infrastructure.api;
 
-import com.authentication_api.application.dto.*;
+import com.authentication_api.application.dto.common.UserDTO;
+import com.authentication_api.application.dto.request.RequestChangePasswordDTO;
+import com.authentication_api.application.dto.request.RequestUserUpdateDTO;
+import com.authentication_api.application.dto.response.ResponseHttpDTO;
 import com.authentication_api.application.service.UserService;
 import com.authentication_api.application.usecase.UserUseCase;
-import com.authentication_api.infrastructure.persistence.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +24,8 @@ public class UserController {
     private final UserUseCase userUseCase;
     private final ModelMapper modelMapper;
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<ResponseHttpDTO> getAllUsers() {
         List<UserDTO> users = userService.getAllUsers();

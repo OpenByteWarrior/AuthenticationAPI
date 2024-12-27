@@ -1,12 +1,13 @@
-package com.authentication_api.infrastructure.rest;
+package com.authentication_api.infrastructure.api;
 
-import com.authentication_api.application.dto.ResponseHttpDTO;
-import com.authentication_api.application.dto.UserDTO;
-import com.authentication_api.application.dto.UserLoginDTO;
+import com.authentication_api.application.dto.response.ResponseHttpDTO;
+import com.authentication_api.application.dto.common.UserDTO;
+import com.authentication_api.application.dto.request.RequestLoginDTO;
 import com.authentication_api.application.usecase.AuthUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,7 @@ public class AuthController {
     private final AuthUseCase authUseCase;
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseHttpDTO> login(@RequestBody UserLoginDTO userLoginDTO) {
+    public ResponseEntity<ResponseHttpDTO> login(@RequestBody RequestLoginDTO userLoginDTO) {
         String token = authUseCase.login(userLoginDTO);
         ResponseHttpDTO response = new ResponseHttpDTO(HttpStatus.OK, "Login successful", token);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -38,7 +39,7 @@ public class AuthController {
         ResponseHttpDTO response = new ResponseHttpDTO(HttpStatus.CREATED, "User registered successfully", createdUser);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @PostMapping("/validate")
     public ResponseEntity<ResponseHttpDTO> validateToken(@RequestBody String token) {
         boolean isValid = authUseCase.validateToken(token);

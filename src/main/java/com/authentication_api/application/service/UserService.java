@@ -1,7 +1,7 @@
 package com.authentication_api.application.service;
 
-import com.authentication_api.application.dto.RequestUserUpdateDTO;
-import com.authentication_api.application.dto.UserDTO;
+import com.authentication_api.application.dto.request.RequestUserUpdateDTO;
+import com.authentication_api.application.dto.common.UserDTO;
 import com.authentication_api.domain.UserGateway;
 import com.authentication_api.infrastructure.persistence.entity.User;
 import jakarta.persistence.EntityNotFoundException;

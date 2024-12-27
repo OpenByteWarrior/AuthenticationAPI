@@ -1,7 +1,7 @@
 package com.authentication_api.application.usecase;
 
-import com.authentication_api.application.dto.UserDTO;
-import com.authentication_api.application.dto.UserLoginDTO;
+import com.authentication_api.application.dto.common.UserDTO;
+import com.authentication_api.application.dto.request.RequestLoginDTO;
 import com.authentication_api.application.service.JwtService;
 import com.authentication_api.application.service.UserService;
 import com.authentication_api.domain.UserGateway;
@@ -27,7 +27,7 @@ public class AuthUseCase {
     public UserDTO register(UserDTO user) {
         return modelMapper.map(userService.createUser(user), UserDTO.class);
     }
-    public String login(UserLoginDTO userLoginDTO) {
+    public String login(RequestLoginDTO userLoginDTO) {
             try {
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(userLoginDTO.getEmail(), userLoginDTO.getPassword())
