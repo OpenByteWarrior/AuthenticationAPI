@@ -16,13 +16,26 @@ public class RoleService {
 
     @CircuitBreaker(name = "roleService", fallbackMethod = "getRoleFallback")
     public String getRoleNameById(UUID roleId) {
-        return roleClient.getRoleNameById(roleId);
-    }
 
+        String cachedRole = roleCache.getIfPresent(roleId);
+        if (cachedRole != null) {
+            return cachedRole;
+        }
+
+        try {
+            String roleName = roleClient.getRoleNameById(roleId);
+
+            if (roleName != null && !roleName.equals("GUESTS")) {
+                roleCache.put(roleId, roleName);
+            }
+            return roleName;
+        } catch (Exception e) {
+            return getRoleFallback(roleId, e);
+        }
+    }
 
     public String getRoleFallback(UUID roleId, Throwable t) {
-        return roleCache.getIfPresent(roleId) != null
-                ? roleCache.getIfPresent(roleId)
-                : "GUEST";
+        return "GUESTS";
     }
 }
+
