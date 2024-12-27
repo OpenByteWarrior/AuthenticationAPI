@@ -1,4 +1,4 @@
-package com.authentication_api.application.dto;
+package com.authentication_api.application.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,11 +13,11 @@ import org.springframework.http.HttpStatus;
 public class ResponseHttpDTO {
     private HttpStatus status;
     private String message;
-    private Object data;
+    private Object response;
 
     public ResponseHttpDTO(HttpStatus status, String message) {
         this.status = status;
         this.message = message;
-        this.data = null;
+        this.response = null;
     }
 }

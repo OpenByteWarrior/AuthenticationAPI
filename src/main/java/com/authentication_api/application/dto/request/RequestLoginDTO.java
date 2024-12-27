@@ -1,4 +1,4 @@
-package com.authentication_api.application.dto;
+package com.authentication_api.application.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserLoginDTO {
-    String email;
-    String password;
+public class RequestLoginDTO {
+    private String email;
+    private String password;
 }

@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleResponseDTO {
-    private RoleDTO response;
-    private String message;
     private String status;
+    private String message;
+    private RoleDTO response;
 }

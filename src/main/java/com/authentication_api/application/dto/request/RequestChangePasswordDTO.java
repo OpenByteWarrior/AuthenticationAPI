@@ -1,4 +1,4 @@
-package com.authentication_api.application.dto;
+package com.authentication_api.application.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestChangePasswordDTO {
-    String currentpassword;
-    String newpassword;
+    private String currentpassword;
+    private String newpassword;
 }
