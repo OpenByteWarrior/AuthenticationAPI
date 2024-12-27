@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class AuthorizationJwt {
 
@@ -27,10 +29,11 @@ public class AuthorizationJwt {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/users/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/api/users/**").hasAnyRole("USER","ADMIN")
                                 .requestMatchers("/admin/**").hasAnyRole("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/**").hasAnyRole("ADMIN")
                                 .requestMatchers("/api/auth/**", "/api/welcome").permitAll()
+                                .requestMatchers("/status/**").hasAnyRole("GUESTS")
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptions -> exceptions

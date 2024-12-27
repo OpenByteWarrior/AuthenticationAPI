@@ -33,10 +33,18 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
         String requestURI = request.getRequestURI();
-        if (requestURI.startsWith("/api/auth/")) {
+        if (requestURI.startsWith("/api/auth/login") || requestURI.equals("/api/auth/register") || requestURI.equals("/api/welcome")) {
             filterChain.doFilter(request, response);
+            return;
+        }
+
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"status\": \"FORBIDDEN\", \"message\": \"El token es requerido.\"}");
             return;
         }
         String token = getTokenFromRequest(request);
@@ -57,8 +65,16 @@ public class JwtFilter extends OncePerRequestFilter {
                             List.of(new SimpleGrantedAuthority(prefixedRole)));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
-        filterChain.doFilter(request, response);
+        try {
+            if (!jwtService.validateToken(token)) {
+                throw new RuntimeException("El token es invalido o ha expirado");
+            }
+            filterChain.doFilter(request, response);
+        } catch (RuntimeException ex) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"status\": \"FORBIDDEN\", \"message\": \"" + ex.getMessage() + "\"}");
+        }
 
     }
 
