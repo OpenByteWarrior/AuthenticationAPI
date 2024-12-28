@@ -1,5 +1,6 @@
 package com.authentication_api.infrastructure.api;
 
+import com.authentication_api.application.dto.request.RequestValidateToken;
 import com.authentication_api.application.dto.response.ResponseHttpDTO;
 import com.authentication_api.application.dto.common.UserDTO;
 import com.authentication_api.application.dto.request.RequestLoginDTO;
@@ -41,9 +42,9 @@ public class AuthController {
     }
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @PostMapping("/validate")
-    public ResponseEntity<ResponseHttpDTO> validateToken(@RequestBody String token) {
-        boolean isValid = authUseCase.validateToken(token);
-        ResponseHttpDTO response = new ResponseHttpDTO(HttpStatus.OK, "Token is valid", isValid);
+    public ResponseEntity<ResponseHttpDTO> validateToken(@RequestBody RequestValidateToken body) {
+        boolean isValid = authUseCase.validateToken(body.getToken());
+        ResponseHttpDTO response = new ResponseHttpDTO(HttpStatus.OK, "Token validated successful", isValid);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

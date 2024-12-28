@@ -40,11 +40,7 @@ public class AuthUseCase {
     }
 
     public boolean validateToken(String token) {
-        try {
-            return jwtService.validateToken(token);
-        } catch (Exception e) {
-            throw new BadCredentialsException("Token is invalid", e);
-        }
+        return jwtService.validateToken(token);
     }
 
     public void logout() {

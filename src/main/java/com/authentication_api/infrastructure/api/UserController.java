@@ -4,12 +4,15 @@ import com.authentication_api.application.dto.common.UserDTO;
 import com.authentication_api.application.dto.request.RequestChangePasswordDTO;
 import com.authentication_api.application.dto.request.RequestUserUpdateDTO;
 import com.authentication_api.application.dto.response.ResponseHttpDTO;
+import com.authentication_api.application.service.JwtService;
 import com.authentication_api.application.service.UserService;
 import com.authentication_api.application.usecase.UserUseCase;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +25,7 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
     private final UserUseCase userUseCase;
+    private final JwtService jwtService;
     private final ModelMapper modelMapper;
 
 
@@ -34,21 +38,33 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseHttpDTO> getUserById(@PathVariable("id") UUID id) {
+    public ResponseEntity<ResponseHttpDTO> getUserById(@PathVariable("id") UUID id, HttpServletRequest request) {
+        String token = jwtService.getTokenFromRequest(request);
+        if (jwtService.checkAccessToUser(id, token)) {
+            throw new AccessDeniedException("No tienes permiso para ver este usuario");
+        }
         UserDTO user = modelMapper.map(userService.getUserById(id), UserDTO.class);
         ResponseHttpDTO response = new ResponseHttpDTO(HttpStatus.OK, "Usuario obtenido correctamente", user);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/changepassword/{id}")
-    public ResponseEntity<ResponseHttpDTO> changePassword(@PathVariable("id") UUID id,@RequestBody RequestChangePasswordDTO requestChangePasswordDTO) {
+    public ResponseEntity<ResponseHttpDTO> changePassword(@PathVariable("id") UUID id,@RequestBody RequestChangePasswordDTO requestChangePasswordDTO, HttpServletRequest request) {
+        String token = jwtService.getTokenFromRequest(request);
+        if (jwtService.checkAccessToUser(id, token)) {
+            throw new AccessDeniedException("No tienes los permiso necesario para cambiar la contraseña de este usuario");
+        }
         userUseCase.changePassword(id,requestChangePasswordDTO);
         ResponseHttpDTO response = new ResponseHttpDTO(HttpStatus.OK, "Contraseña cambiada correctamente");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseHttpDTO> updateUserById(@PathVariable("id") UUID id, @RequestBody RequestUserUpdateDTO requestUserUpdateDTO) {
+    public ResponseEntity<ResponseHttpDTO> updateUserById(@PathVariable("id") UUID id, @RequestBody RequestUserUpdateDTO requestUserUpdateDTO, HttpServletRequest request) {
+        String token = jwtService.getTokenFromRequest(request);
+        if (jwtService.checkAccessToUser(id, token)) {
+            throw new AccessDeniedException("No tienes los permiso necesario para actualizar este usuario");
+        }
         UserDTO user = modelMapper.map(userService.updateUserById(id, requestUserUpdateDTO), UserDTO.class);
         ResponseHttpDTO response = new ResponseHttpDTO(HttpStatus.OK, "Usuario actualizado correctamente ",user);
         return new ResponseEntity<>(response, HttpStatus.OK);

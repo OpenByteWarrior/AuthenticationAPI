@@ -1,22 +1,30 @@
 package com.authentication_api.infrastructure.security;
 
+import com.authentication_api.application.dto.response.ResponseHttpDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.security.access.AccessDeniedException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+
+    private final ObjectMapper objectMapper;
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
             throws IOException, ServletException {
+        ResponseHttpDTO errorResponse = new ResponseHttpDTO(HttpStatus.FORBIDDEN, "No tienes permisos de acceso a este recurso.");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");
-        String message = "{\"status\": \"FORBIDDEN\", \"message\": \"No tienes permisos de acceso a este recurso.\"}";
-        response.getWriter().write(message);
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }
