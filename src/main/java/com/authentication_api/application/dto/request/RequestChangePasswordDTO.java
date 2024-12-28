@@ -1,4 +1,4 @@
-package com.authentication_api.infrastructure.dto;
+package com.authentication_api.application.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoleResponseDTO {
-    private String status;
-    private String message;
-    private RoleDTO response;
+public class RequestChangePasswordDTO {
+    private String currentpassword;
+    private String newpassword;
 }

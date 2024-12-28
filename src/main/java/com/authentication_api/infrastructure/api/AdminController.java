@@ -1,4 +1,4 @@
-package com.authentication_api.infrastructure.rest;
+package com.authentication_api.infrastructure.api;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

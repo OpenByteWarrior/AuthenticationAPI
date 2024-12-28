@@ -1,4 +1,4 @@
-package com.authentication_api.application.dto;
+package com.authentication_api.application.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 public class RequestUserUpdateDTO {
-    String firstName;
-    String lastName;
-    UUID roleId;
+    private String firstName;
+    private String lastName;
+    private UUID roleId;
 }

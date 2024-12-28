@@ -1,6 +1,6 @@
 package com.authentication_api.infrastructure.exception;
 
-import com.authentication_api.application.dto.ResponseHttpDTO;
+import com.authentication_api.application.dto.response.ResponseHttpDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

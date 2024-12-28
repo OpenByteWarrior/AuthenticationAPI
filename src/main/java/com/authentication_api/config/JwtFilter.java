@@ -1,10 +1,13 @@
 package com.authentication_api.config;
 
+import com.authentication_api.application.dto.response.ResponseHttpDTO;
 import com.authentication_api.application.service.JwtService;
 import com.authentication_api.application.service.RoleService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,14 +32,21 @@ public class JwtFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
     private final RoleService roleService;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
         String requestURI = request.getRequestURI();
-        if (requestURI.startsWith("/api/auth/")) {
+        if (requestURI.startsWith("/api/auth/login") || requestURI.equals("/api/auth/register") || requestURI.equals("/api/welcome")) {
             filterChain.doFilter(request, response);
+            return;
+        }
+
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            sendErrorResponse(response, HttpStatus.FORBIDDEN, "El token es requerido.");
             return;
         }
         String token = getTokenFromRequest(request);
@@ -57,11 +67,22 @@ public class JwtFilter extends OncePerRequestFilter {
                             List.of(new SimpleGrantedAuthority(prefixedRole)));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
-        filterChain.doFilter(request, response);
+        try {
+            if (!jwtService.validateToken(token)) {
+                throw new RuntimeException("El token es invalido o ha expirado");
+            }
+            filterChain.doFilter(request, response);
+        } catch (RuntimeException ex) {
+            sendErrorResponse(response, HttpStatus.FORBIDDEN, ex.getMessage());
+        }
 
     }
-
+    private void sendErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
+        ResponseHttpDTO errorResponse = new ResponseHttpDTO(status, message);
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+    }
     private String getTokenFromRequest(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
