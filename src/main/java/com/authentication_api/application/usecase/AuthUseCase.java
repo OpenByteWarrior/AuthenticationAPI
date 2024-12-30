@@ -8,10 +8,13 @@ import com.authentication_api.domain.UserGateway;
 import com.authentication_api.infrastructure.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -20,14 +23,15 @@ public class AuthUseCase {
     private final UserService userService;
     private final JwtService jwtService;
     private final ModelMapper modelMapper;
+    private final MessageSource messageSource;
     private final UserGateway userGateway;
     private final AuthenticationManager authenticationManager;
 
 
-    public UserDTO register(UserDTO user) {
-        return modelMapper.map(userService.createUser(user), UserDTO.class);
+    public UserDTO register(UserDTO user,Locale locale) {
+        return modelMapper.map(userService.createUser(user,locale), UserDTO.class);
     }
-    public String login(RequestLoginDTO userLoginDTO) {
+    public String login(RequestLoginDTO userLoginDTO, Locale locale) {
             try {
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(userLoginDTO.getEmail(), userLoginDTO.getPassword())
@@ -35,7 +39,7 @@ public class AuthUseCase {
                 CustomUserDetails user = userGateway.findByEmail(userLoginDTO.getEmail()).orElseThrow();
                 return jwtService.generateToken(user);
             } catch (Exception e) {
-                throw new BadCredentialsException("Invalid email or password", e);
+                throw new BadCredentialsException(messageSource.getMessage("info.auth.login.failed",new Object[]{e},locale));
             }
     }
 
