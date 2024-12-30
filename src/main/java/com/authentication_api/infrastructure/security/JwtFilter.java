@@ -1,10 +1,11 @@
-package com.authentication_api.config;
+package com.authentication_api.infrastructure.security;
 
 import com.authentication_api.application.dto.response.ResponseHttpDTO;
 import com.authentication_api.application.service.JwtService;
 import com.authentication_api.application.service.RoleService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Configuration
@@ -32,11 +34,13 @@ public class JwtFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
     private final RoleService roleService;
+    private final MessageSource messageSource;
     private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        Locale locale = request.getLocale();
         String requestURI = request.getRequestURI();
         if (requestURI.startsWith("/api/auth/login") || requestURI.equals("/api/auth/register") || requestURI.equals("/api/welcome")) {
             filterChain.doFilter(request, response);
@@ -46,7 +50,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            sendErrorResponse(response, HttpStatus.FORBIDDEN, "El token es requerido.");
+            sendErrorResponse(response, HttpStatus.FORBIDDEN, messageSource.getMessage("info.token.required", null, locale));
             return;
         }
         String token = getTokenFromRequest(request);
@@ -69,7 +73,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         try {
             if (!jwtService.validateToken(token)) {
-                throw new RuntimeException("El token es invalido o ha expirado");
+                throw new RuntimeException(messageSource.getMessage("info.token.invalid", null, locale));
             }
             filterChain.doFilter(request, response);
         } catch (RuntimeException ex) {
