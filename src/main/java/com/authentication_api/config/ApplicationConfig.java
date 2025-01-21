@@ -33,14 +33,6 @@ import java.util.concurrent.TimeUnit;
 public class ApplicationConfig implements WebMvcConfigurer {
     private final UserGateway userGateway;
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedHeaders("Content-Type", "Authorization");
-    }
-
     @Bean
     public MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
